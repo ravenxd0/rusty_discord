@@ -45,6 +45,7 @@ Place Your Discord Bot Token in config.toml:
 token = "YOUR_DISCORD_BOT_TOKEN"
 ````
 [MemeAPI] is used for `meme` and `gif` command.
+
 To get All command type `Ru help` in server.
 
 
