@@ -9,7 +9,8 @@ For using Songbird and streaming music folllowing dependencies need to be meet:
 - FFmpeg - Audio/Video conversion tool.
 - youtube-dl - Audio/Video download tool.
 
-Add Dependencies:
+
+Cargo.toml:
 ```toml
 [dependencies]
 tokio = { version = "1.18", features = ["full"] }
@@ -44,12 +45,12 @@ Place Your Discord Bot Token in config.toml:
 token = "YOUR_DISCORD_BOT_TOKEN"
 ````
 [MemeAPI] is used.
-
+<--
 Chat Bot Command:
 <p align="center">
     <img src="./cover.png"/>
 </p>
-
+-->
 [Serenity]: https://github.com/serenity-rs/serenity
 [Songbird]: https://github.com/serenity-rs/songbird
 [MemeAPI]: https://meme-api.com/gimme
