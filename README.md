@@ -49,7 +49,7 @@ Chat Bot Command:
 <p align="center">
     <img src="./cover.png"/>
 </p>
-``
+
 [Serenity]: https://github.com/serenity-rs/serenity
 [Songbird]: https://github.com/serenity-rs/songbird
 [MemeAPI]: https://meme-api.com/gimme
