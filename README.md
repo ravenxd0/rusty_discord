@@ -44,7 +44,7 @@ Place Your Discord Bot Token in config.toml:
 ```toml
 token = "YOUR_DISCORD_BOT_TOKEN"
 ````
-[MemeAPI] is used.
+[MemeAPI] is used for `meme` and `gif` command.
 
 
 [Serenity]: https://github.com/serenity-rs/serenity
