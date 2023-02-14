@@ -241,18 +241,14 @@ async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
         Ok(url) => url,
         Err(_) => {
             msg.channel_id
-                .say(&ctx.http, "Must provide a URL to a video or audio.")
+                .say(
+                    &ctx.http,
+                    "Must provide a Keyword OR URL to a video or audio.",
+                )
                 .await?;
             return Ok(());
         }
     };
-
-    if !url.starts_with("http") {
-        msg.channel_id
-            .say(&ctx.http, "Must Provide a valid URL")
-            .await?;
-        return Ok(());
-    }
 
     let guild = msg.guild(&ctx.cache).unwrap();
     let manager = songbird::get(ctx)
@@ -261,8 +257,7 @@ async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
 
     if let Some(handler_lock) = manager.get(guild.id) {
         let mut handler = handler_lock.lock().await;
-
-        let source = match songbird::ytdl(&url).await {
+        let source = match songbird::input::ytdl_search(&url).await {
             Ok(source) => source,
             Err(e) => {
                 eprintln!("[ ERROR ] {:?}", e);
