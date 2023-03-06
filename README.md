@@ -48,6 +48,7 @@ token = "YOUR_DISCORD_BOT_TOKEN"
 
 To get All command type `Ru help` in server.
 
+To use ChatGPT API mention bot and your query
 
 [Serenity]: https://github.com/serenity-rs/serenity
 [Songbird]: https://github.com/serenity-rs/songbird
