@@ -40,9 +40,10 @@ features = [
 version ="0.11"
 ````
 
-Place Your Discord Bot Token in config.toml:
+Place Your Discord Bot Token & OPENAI KEY in .env file :
 ```toml
-token = "YOUR_DISCORD_BOT_TOKEN"
+DISCORD_BOT_TOKEN=YOUR_DISCORD_BOT_TOKEN
+OPENAI_KEY=YOUR_OPENAI_KEY
 ````
 [MemeAPI] is used for `meme` and `gif` command.
 
