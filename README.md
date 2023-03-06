@@ -15,7 +15,7 @@ Cargo.toml:
 [dependencies]
 tokio = { version = "1.18", features = ["full"] }
 reqwest = { version = "0.11", features = ["json"] }
-toml = "0.5.9"
+dotenvy = "0.15.6"
 serde = "1.0.137"
 serde_derive = "1.0.137"
 serde_json = "1.0.81"
