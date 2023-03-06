@@ -1,7 +1,6 @@
 use std::collections::HashSet;
-use std::fs;
+use std::env;
 
-use serde_derive::Deserialize;
 use serde_json::Value;
 
 use reqwest::get;
@@ -25,17 +24,7 @@ use serenity::Result as SerenityResult;
 
 use songbird::SerenityInit;
 
-#[derive(Deserialize)]
-struct Bot {
-    token: String,
-}
-
-impl Bot {
-    fn new() -> Self {
-        let content = fs::read_to_string("config.toml").unwrap();
-        toml::from_str(&content).unwrap() // Create Bot Struct using toml values
-    }
-}
+use crate::chatgpt::response_from_chatgpt;
 
 struct Handler;
 
@@ -60,10 +49,25 @@ impl EventHandler for Handler {
         if msg.content.to_lowercase().starts_with("hello ru") {
             msg.channel_id.broadcast_typing(&ctx).await.unwrap();
 
-            handle(
-                msg.reply(ctx, format!("Hello <@{}>", msg.author.id)).await
-            );
+            handle(msg.reply(ctx, format!("Hello <@{}>", msg.author.id)).await);
+            return;
         }
+
+        let mut is_mention = false;
+
+        if let Ok(state) = msg.mentions_me(&ctx.http).await {
+            is_mention = state;
+        };
+        
+        if is_mention {
+            let typing = msg.channel_id.start_typing(&ctx.http).unwrap();
+            let response = response_from_chatgpt(msg.content).await;
+            
+            typing.stop().unwrap();
+            handle(msg.channel_id.say(&ctx.http, response).await);
+        }
+
+
     }
 
     async fn guild_member_addition(&self, ctx: Context, new_member: Member) {
@@ -233,6 +237,7 @@ async fn leave(ctx: &Context, msg: &Message) -> CommandResult {
 #[description = "Play a audio using video or audio url"]
 #[only_in(guilds)]
 async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    let typing = msg.channel_id.start_typing(&ctx.http)?;
 
     let url = match args.single::<String>() {
         Ok(url) => url.trim().to_string(),
@@ -254,7 +259,7 @@ async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
 
     if let Some(handler_lock) = manager.get(guild.id) {
         let mut handler = handler_lock.lock().await;
-        let source = match songbird::ytdl(&url) .await {
+        let source = match songbird::ytdl(&url).await {
             Ok(source) => source,
             Err(e) => {
                 eprintln!("[ ERROR ] {:?}", e);
@@ -271,6 +276,8 @@ async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
             .title
             .clone()
             .unwrap_or("Unknown".to_string());
+
+        typing.stop().unwrap();
         handler.play_source(source); // Play audio om channel
         msg.channel_id
             .say(&ctx.http, format!("Playing {}", title))
@@ -364,7 +371,7 @@ async fn my_help(
 
 // Client Initialization
 pub async fn init_client() -> Client {
-    let bot = Bot::new();
+    dotenvy::dotenv().ok();
 
     let framework = StandardFramework::new()
         .configure(|c| c.with_whitespace(true).prefix("Ru "))
@@ -373,8 +380,9 @@ pub async fn init_client() -> Client {
         .group(&MUSIC_GROUP);
 
     let intents = GatewayIntents::all();
+    let token = env::var("DISCORD_TOKEN").expect("Expected token in environment");
 
-    Client::builder(bot.token, intents)
+    Client::builder(&token, intents)
         .event_handler(Handler)
         .framework(framework)
         .register_songbird()
