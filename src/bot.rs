@@ -56,14 +56,12 @@ impl EventHandler for Handler {
             .await
     }
 
-    // Dispatched when  message is created
     async fn message(&self, ctx: Context, msg: Message) {
         if msg.content.to_lowercase().starts_with("hello ru") {
             msg.channel_id.broadcast_typing(&ctx).await.unwrap();
 
             handle(
-                msg.reply(ctx, format!("@97723693Hello <@{}>", msg.author.id))
-                    .await,
+                msg.reply(ctx, format!("Hello <@{}>", msg.author.id)).await
             );
         }
     }
@@ -235,10 +233,9 @@ async fn leave(ctx: &Context, msg: &Message) -> CommandResult {
 #[description = "Play a audio using video or audio url"]
 #[only_in(guilds)]
 async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
-    msg.channel_id.broadcast_typing(&ctx).await?;
 
     let url = match args.single::<String>() {
-        Ok(url) => url,
+        Ok(url) => url.trim().to_string(),
         Err(_) => {
             msg.channel_id
                 .say(
@@ -257,7 +254,7 @@ async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
 
     if let Some(handler_lock) = manager.get(guild.id) {
         let mut handler = handler_lock.lock().await;
-        let source = match songbird::input::ytdl_search(&url).await {
+        let source = match songbird::ytdl(&url) .await {
             Ok(source) => source,
             Err(e) => {
                 eprintln!("[ ERROR ] {:?}", e);
