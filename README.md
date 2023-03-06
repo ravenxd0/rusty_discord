@@ -42,7 +42,7 @@ version ="0.11"
 
 Place Your Discord Bot Token & OPENAI KEY in .env file :
 ```env
-DISCORD_BOT_TOKEN=YOUR_DISCORD_BOT_TOKEN
+DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN
 OPENAI_KEY=YOUR_OPENAI_KEY
 ````
 [MemeAPI] is used for `meme` and `gif` command.
